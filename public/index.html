@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Welcome to Firebase Hosting</title>
+
+  <!-- update the version number as needed -->
+  <script defer src="/__/firebase/12.8.0/firebase-app-compat.js"></script>
+  <!-- include only the Firebase features as you need -->
+  <script defer src="/__/firebase/12.8.0/firebase-auth-compat.js"></script>
+  <script defer src="/__/firebase/12.8.0/firebase-database-compat.js"></script>
+  <script defer src="/__/firebase/12.8.0/firebase-firestore-compat.js"></script>
+  <script defer src="/__/firebase/12.8.0/firebase-functions-compat.js"></script>
+  <script defer src="/__/firebase/12.8.0/firebase-messaging-compat.js"></script>
+  <script defer src="/__/firebase/12.8.0/firebase-storage-compat.js"></script>
+  <script defer src="/__/firebase/12.8.0/firebase-analytics-compat.js"></script>
+  <script defer src="/__/firebase/12.8.0/firebase-remote-config-compat.js"></script>
+  <script defer src="/__/firebase/12.8.0/firebase-performance-compat.js"></script>
+  <!-- 
+      initialize the SDK after all desired features are loaded, set useEmulator to false
+      to avoid connecting the SDK to running emulators.
+    -->
+  <script defer src="/__/firebase/init.js?useEmulator=true"></script>
+
+  <link rel="stylesheet" href="style.css">
+
+</head>
+
+<body>
+  <div id="game-container">
+    <canvas id="gameCanvas" width="800" height="600"></canvas>
+
+    <!-- HUD -->
+    <div id="hud" class="hidden">
+      <div id="level-display">Level 1: Aries</div>
+      <div id="timer-display">TIME: 30</div>
+    </div>
+
+    <!-- Start Screen -->
+    <div id="start-screen" class="overlay">
+      <h1>Astronaut 311-C</h1>
+      <div class="message-body">
+        As humanity's best pilot, you have been selected for a crucial, top-secret mission: to find extraterrestrial life.
+
+        To do this, you must pilot your spacecraft between the stars of the 12 Zodiac constellations, as they appear. With each new constellation, you will have less time to connect the points. You must connect all of the constellations within the time limit to discover our intergalactic friends.
+
+        Use your arrow keys to move the spacecraft. Press SHIFT to speed up and Z to slow down.
+
+        Good luck, and bon voyage!
+      </div>
+      <div class="press-enter">[Press ENTER to continue]</div>
+    </div>
+
+    <!-- Game Over Screen -->
+    <div id="fail-screen" class="overlay hidden">
+      <h1>MISSION FAILED</h1>
+      <div class="message-body">
+        You have failed your mission, Astronaut 311-A. Humanity remains alone among the stars. Unless you choose to try again...
+      </div>
+      <div class="press-enter">[Press ENTER to restart]</div>
+    </div>
+
+    <!-- Win Screen -->
+    <div id="win-screen" class="overlay hidden">
+      <h1>MESSAGE INCOMING...</h1>
+      <div class="message-body">
+        Dear Traveler,
+
+        CONGRATULATIONS!!! You made it. Welcome to our world! We are happy to have you here.
+
+        We are the Zargaborgs. And I am Zarg 966-Z. I had to step out to run some errands in Orion's belt, but I'll be back soon. In the meantime, make yourself at home. I left some yarlop juice in the fridge for you.
+
+        See you soon,
+        ZZ
+      </div>
+      <div class="press-enter">[Press ENTER to play again]</div>
+    </div>
+
+  </div>
+
+  <script src="game.js"></script>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      // Firebase initialization left in case needed later, 
+      // effectively mostly unused for the game logic itself for now.
+      try {
+        let app = firebase.app();
+        let features = [
+          'auth',
+          'database',
+          'firestore',
+          'functions',
+          'messaging',
+          'storage',
+          'analytics',
+          'remoteConfig',
+          'performance',
+        ].filter(feature => typeof app[feature] === 'function');
+        console.log(`Firebase SDK loaded with ${features.join(', ')}`);
+      } catch (e) {
+        console.error(e);
+      }
+    });
+  </script>
+</body>
+
+</html>
