@@ -115,3 +115,62 @@ p,
     /* Neon cyan */
     text-shadow: 0 0 5px #00ffff;
 }
+#leaderboard-screen input {
+    background: transparent;
+    border: 2px solid #ff00bb;
+    color: #fff;
+    font-family: 'Press Start 2P', cursive;
+    font-size: 24px;
+    padding: 10px;
+    text-align: center;
+    text-transform: uppercase;
+    width: 150px;
+    margin-bottom: 20px;
+    outline: none;
+}
+
+.leaderboard-list {
+    margin: 20px 0;
+    width: 100%;
+    max-width: 500px;
+}
+
+.score-row {
+    display: flex;
+    justify-content: space-between;
+    font-family: 'Courier New', monospace;
+    font-size: 16px;
+    color: #00ffff;
+    margin-bottom: 5px;
+    border-bottom: 1px dotted rgba(0, 255, 255, 0.3);
+    padding-bottom: 2px;
+}
+
+.score-row.header {
+    color: #ffa100;
+    font-weight: bold;
+    border-bottom: 2px solid #ffa100;
+    margin-bottom: 10px;
+}
+
+button {
+    background: #ff00bb;
+    color: #fff;
+    border: none;
+    font-family: 'Press Start 2P', cursive;
+    font-size: 14px;
+    padding: 15px 30px;
+    cursor: pointer;
+    box-shadow: 0 0 10px #ff00bb;
+    transition: transform 0.1s;
+}
+
+button:hover {
+    transform: scale(1.05);
+}
+
+button:disabled {
+    background: #555;
+    box-shadow: none;
+    cursor: not-allowed;
+}
