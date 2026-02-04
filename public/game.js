@@ -24,7 +24,8 @@ const GAME_STATES = {
   START: 'START',
   PLAYING: 'PLAYING',
   FAIL: 'FAIL',
-  WIN: 'WIN'
+  WIN: 'WIN',
+  LEADERBOARD: 'LEADERBOARD'
 };
 
 // Zodiac Configurations (Approximate shapes)
@@ -123,6 +124,9 @@ let currentLevelIndex = 0;
 let levelTimeRemaining = 0;
 let lastTime = 0;
 let keys = {};
+let score = 0;
+let db = null;
+let auth = null;
 
 // Game Objects
 let ship = {
@@ -143,14 +147,31 @@ let nextStarIndex = 0; // Which star needs to be connected next
 const uiStart = document.getElementById('start-screen');
 const uiFail = document.getElementById('fail-screen');
 const uiWin = document.getElementById('win-screen');
+const uiLeaderboard = document.getElementById('leaderboard-screen');
 const uiHud = document.getElementById('hud');
 const elLevel = document.getElementById('level-display');
 const elTimer = document.getElementById('timer-display');
+const elScore = document.getElementById('score-display');
+const elNewHighScore = document.getElementById('new-high-score');
+const elPlayerName = document.getElementById('player-name');
+const btnSubmitScore = document.getElementById('submit-score-btn');
+const elLeaderboardList = document.getElementById('leaderboard-list');
 
 // --- Initialization ---
 function init() {
   canvas = document.getElementById('gameCanvas');
   ctx = canvas.getContext('2d');
+
+  // Firebase Init
+  try {
+    const app = firebase.app();
+    auth = firebase.auth();
+    db = firebase.firestore();
+    auth.signInAnonymously().catch(console.error);
+    console.log("Firebase services initialized.");
+  } catch (e) {
+    console.log("Firebase not configured, offline mode.");
+  }
 
   window.addEventListener('keydown', (e) => {
     keys[e.key] = true;
@@ -166,21 +187,28 @@ function init() {
     keys[e.key] = false;
   });
 
+  btnSubmitScore.addEventListener('click', submitScore);
+
   requestAnimationFrame(gameLoop);
 }
 
 function handleStateInput() {
   if (gameState === GAME_STATES.START) {
     startGame();
-  } else if (gameState === GAME_STATES.FAIL) {
-    resetGame();
-  } else if (gameState === GAME_STATES.WIN) {
-    resetGame();
+  } else if (gameState === GAME_STATES.FAIL || gameState === GAME_STATES.WIN) {
+    // Transition to Leaderboard
+    showLeaderboard();
+  } else if (gameState === GAME_STATES.LEADERBOARD) {
+    // Only verify input focus if submitting, otherwise replay
+    if (document.activeElement !== elPlayerName) {
+      resetGame();
+    }
   }
 }
 
 function resetGame() {
   currentLevelIndex = 0;
+  score = 0;
   startGame();
 }
 
@@ -189,6 +217,7 @@ function startGame() {
   uiStart.classList.add('hidden');
   uiFail.classList.add('hidden');
   uiWin.classList.add('hidden');
+  uiLeaderboard.classList.add('hidden');
   uiHud.classList.remove('hidden');
 
   startLevel(0);
@@ -218,6 +247,9 @@ function startLevel(index) {
 }
 
 function completeLevel() {
+  // Add Score
+  score += Math.ceil(levelTimeRemaining * 100);
+
   if (currentLevelIndex < CONSTELLATIONS.length - 1) {
     startLevel(currentLevelIndex + 1);
   } else {
@@ -229,12 +261,97 @@ function failGame() {
   gameState = GAME_STATES.FAIL;
   uiFail.classList.remove('hidden');
   uiHud.classList.add('hidden');
+  // Wait for Enter to go to leaderboard
 }
 
 function winGame() {
   gameState = GAME_STATES.WIN;
   uiWin.classList.remove('hidden');
   uiHud.classList.add('hidden');
+  // Wait for Enter to go to leaderboard
+}
+
+// --- Leaderboard Logic ---
+async function showLeaderboard() {
+  gameState = GAME_STATES.LEADERBOARD;
+  uiFail.classList.add('hidden');
+  uiWin.classList.add('hidden');
+  uiLeaderboard.classList.remove('hidden');
+
+  elNewHighScore.classList.remove('hidden'); // Show submission by default if score > 0
+  elLeaderboardList.innerHTML = '<div class="score-row header"><span>RANK</span><span>PILOT</span><span>SCORE</span></div><div>Loading...</div>';
+
+  if (db) {
+    loadLeaderboard();
+  } else {
+    elLeaderboardList.innerHTML += '<div>Offline Mode</div>';
+  }
+}
+
+async function loadLeaderboard() {
+  try {
+    const snap = await db.collection('scores')
+      .orderBy('score', 'desc')
+      .limit(10)
+      .get();
+
+    // Render list
+    let html = '<div class="score-row header"><span>RANK</span><span>PILOT</span><span>SCORE</span></div>';
+    let i = 1;
+    snap.forEach(doc => {
+      const data = doc.data();
+      html += `<div class="score-row"><span>${i++}</span><span>${data.name}</span><span>${data.score}</span></div>`;
+    });
+    elLeaderboardList.innerHTML = html;
+  } catch (e) {
+    console.error(e);
+    elLeaderboardList.innerHTML += '<div>Error loading scores</div>';
+    const fakeData = [
+      { name: "ABC", score: 5000 },
+      { name: "XYZ", score: 4500 },
+      { name: "CPU", score: 3000 }
+    ];
+    let html = '<div class="score-row header"><span>RANK</span><span>PILOT</span><span>SCORE</span></div>';
+    let i = 1;
+    fakeData.forEach(data => {
+      html += `<div class="score-row"><span>${i++}</span><span>${data.name}</span><span>${data.score}</span></div>`;
+    });
+    elLeaderboardList.innerHTML = html;
+  }
+}
+
+async function submitScore() {
+  const name = elPlayerName.value.toUpperCase();
+  if (name.length !== 3) {
+    alert("Please enter 3 initials.");
+    return;
+  }
+
+  btnSubmitScore.disabled = true;
+  btnSubmitScore.innerText = "SAVING...";
+
+  if (db && auth && auth.currentUser) {
+    try {
+      await db.collection('scores').add({
+        name: name,
+        score: score,
+        uid: auth.currentUser.uid,
+        timestamp: firebase.firestore.FieldValue.serverTimestamp()
+      });
+      elNewHighScore.classList.add('hidden'); // Hide input after submit
+      loadLeaderboard(); // Refresh
+    } catch (e) {
+      console.error(e);
+      alert("Error saving score.");
+      btnSubmitScore.disabled = false;
+      btnSubmitScore.innerText = "SUBMIT";
+    }
+  } else {
+    // alert("Database disconnected.");
+    // Simulate save for demo if offline
+    alert("Score saved (Offline Mode)");
+    elNewHighScore.classList.add('hidden');
+  }
 }
 
 // --- Game Loop ---
@@ -318,6 +435,7 @@ function updateHud() {
   if (CONSTELLATIONS[currentLevelIndex]) {
     elLevel.innerText = `Level ${currentLevelIndex + 1}: ${CONSTELLATIONS[currentLevelIndex].name}`;
     elTimer.innerText = `TIME: ${Math.ceil(levelTimeRemaining)}`;
+    elScore.innerText = `SCORE: ${score}`;
 
     // Timer warning color
     if (levelTimeRemaining <= 5) {
@@ -335,8 +453,6 @@ function draw() {
   ctx.fillRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
 
   if (gameState !== GAME_STATES.PLAYING) {
-    // Draw some background dust/stars for ambiance even in menus?
-    // Optional. For now plain background.
     return;
   }
 
@@ -363,14 +479,6 @@ function draw() {
   ctx.shadowColor = COLORS.lineConnected;
 
   if (stars.length > 0) {
-    // Draw up to the last connected star
-    // We only draw lines between connected stars. 
-    // If stars[0] is connected and stars[1] is connected, draw 0->1.
-    // Logic: connection is sequential. So we draw 0 to `nextStarIndex-1`.
-    // Wait, if stars are points, we want to draw line from S_i to S_i+1 IF S_i+1 is connected? 
-    // Actually, if we touched star N, it becomes "connected".
-    // The edge leading TO it should be lit.
-
     let lastConnectedIdx = nextStarIndex - 1;
     if (lastConnectedIdx >= 0) {
       ctx.moveTo(stars[0].x, stars[0].y);
@@ -416,14 +524,6 @@ function draw() {
 function drawShip() {
   ctx.save();
   ctx.translate(ship.x, ship.y);
-  // Rotate to match movement direction. 
-  // ship.angle is in radians, 0 is East.
-  // Ship model points North (Up, -Y).
-  // So if angle is 0 (East), we want to rotate 90 deg (PI/2) to point Right? 
-  // No, standard context rotation:
-  // angle 0 = Right.
-  // Ship points Up ( -90deg relative to Right). 
-  // So we need to rotate by ship.angle + PI/2.
   ctx.rotate(ship.angle + Math.PI / 2);
 
   ctx.fillStyle = COLORS.ship;

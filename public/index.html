@@ -35,6 +35,7 @@
     <!-- HUD -->
     <div id="hud" class="hidden">
       <div id="level-display">Level 1: Aries</div>
+      <div id="score-display">SCORE: 0</div>
       <div id="timer-display">TIME: 30</div>
     </div>
 
@@ -75,6 +76,29 @@
         See you soon,
         ZZ
       </div>
+      <div class="press-enter">[Press ENTER to play again]</div>
+    </div>
+
+    <!-- Leaderboard Screen -->
+    <div id="leaderboard-screen" class="overlay hidden">
+      <h1>HIGH SCORES</h1>
+    
+      <div id="new-high-score" class="hidden">
+        <p>NEW RECORD!</p>
+        <input type="text" id="player-name" maxlength="3" placeholder="AAA">
+        <br>
+        <button id="submit-score-btn">SUBMIT</button>
+      </div>
+    
+      <div class="leaderboard-list" id="leaderboard-list">
+        <!-- Rows will be injected here -->
+        <div class="score-row header">
+          <span>RANK</span>
+          <span>PILOT</span>
+          <span>SCORE</span>
+        </div>
+      </div>
+    
       <div class="press-enter">[Press ENTER to play again]</div>
     </div>
 
