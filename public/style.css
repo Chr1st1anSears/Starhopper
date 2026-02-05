@@ -174,3 +174,41 @@ button:disabled {
     box-shadow: none;
     cursor: not-allowed;
 }
+
+/* Zarg Win Screen Styling */
+.zarg-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background: rgba(0, 0, 0, 0.7);
+    padding: 30px;
+    border: 2px solid #00ffbb;
+    box-shadow: 0 0 20px #00ffbb;
+    border-radius: 10px;
+}
+
+.zarg-text-top, .zarg-text-bottom {
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 18px;
+    color: #00ffbb;
+    margin: 15px 0;
+    text-shadow: 0 0 5px #00ffbb;
+    max-width: 500px;
+    text-align: center;
+}
+
+.zarg-avatar {
+    filter: drop-shadow(0 0 10px #00ffbb);
+    margin: 20px 0;
+    image-rendering: pixelated;
+}
+
+/* Optional: Add a slight hover animation to make Zarg feel alive */
+.zarg-avatar {
+    animation: float 3s ease-in-out infinite;
+}
+
+@keyframes float {
+    0%, 100% { transform: translateY(0px); }
+    50% { transform: translateY(-10px); }
+}
