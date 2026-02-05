@@ -33,84 +33,84 @@ const GAME_STATES = {
 const CONSTELLATIONS = [
   {
     name: "Aries",
-    timeLimit: 30,
+    timeLimit: 25,
     stars: [
       { x: 0.2, y: 0.5 }, { x: 0.4, y: 0.4 }, { x: 0.6, y: 0.45 }, { x: 0.7, y: 0.6 }
     ]
   }, // 1
   {
     name: "Taurus",
-    timeLimit: 28,
+    timeLimit: 23,
     stars: [
       { x: 0.3, y: 0.7 }, { x: 0.4, y: 0.5 }, { x: 0.35, y: 0.3 }, { x: 0.5, y: 0.35 }, { x: 0.7, y: 0.3 }, { x: 0.8, y: 0.4 }
     ]
   }, // 2
   {
     name: "Gemini",
-    timeLimit: 26,
+    timeLimit: 21,
     stars: [
       { x: 0.3, y: 0.2 }, { x: 0.3, y: 0.8 }, { x: 0.4, y: 0.8 }, { x: 0.4, y: 0.2 }, { x: 0.35, y: 0.5 }, { x: 0.5, y: 0.5 } // Abstracted simple form
     ]
   }, // 3 - Gemini is complex, simplified to two parallel lines connected
   {
     name: "Cancer",
-    timeLimit: 24,
+    timeLimit: 19,
     stars: [
       { x: 0.5, y: 0.5 }, { x: 0.4, y: 0.3 }, { x: 0.6, y: 0.3 }, { x: 0.5, y: 0.7 }, { x: 0.4, y: 0.8 }
     ]
   }, // 4
   {
     name: "Leo",
-    timeLimit: 22,
+    timeLimit: 17,
     stars: [
       { x: 0.6, y: 0.3 }, { x: 0.5, y: 0.2 }, { x: 0.4, y: 0.25 }, { x: 0.35, y: 0.4 }, { x: 0.4, y: 0.6 }, { x: 0.6, y: 0.6 }, { x: 0.7, y: 0.5 }
     ]
   }, // 5
   {
     name: "Virgo",
-    timeLimit: 20,
+    timeLimit: 15,
     stars: [
       { x: 0.2, y: 0.5 }, { x: 0.4, y: 0.5 }, { x: 0.5, y: 0.3 }, { x: 0.5, y: 0.7 }, { x: 0.7, y: 0.4 }, { x: 0.8, y: 0.8 }
     ]
   }, // 6
   {
     name: "Libra",
-    timeLimit: 19,
+    timeLimit: 14,
     stars: [
       { x: 0.3, y: 0.7 }, { x: 0.5, y: 0.8 }, { x: 0.7, y: 0.7 }, { x: 0.5, y: 0.4 }, { x: 0.3, y: 0.4 }, { x: 0.7, y: 0.4 }
     ]
   }, // 7
   {
     name: "Scorpio",
-    timeLimit: 18,
+    timeLimit: 13,
     stars: [
       { x: 0.2, y: 0.3 }, { x: 0.3, y: 0.4 }, { x: 0.4, y: 0.5 }, { x: 0.5, y: 0.6 }, { x: 0.6, y: 0.5 }, { x: 0.6, y: 0.3 }, { x: 0.7, y: 0.3 }, { x: 0.75, y: 0.4 }
     ]
   }, // 8
   {
     name: "Sagittarius",
-    timeLimit: 17,
+    timeLimit: 12,
     stars: [
       { x: 0.3, y: 0.6 }, { x: 0.5, y: 0.6 }, { x: 0.5, y: 0.3 }, { x: 0.6, y: 0.5 }, { x: 0.7, y: 0.4 }, { x: 0.4, y: 0.4 }, { x: 0.4, y: 0.7 }
     ]
   }, // 9
   {
     name: "Capricorn",
-    timeLimit: 16,
+    timeLimit: 11,
     stars: [
       { x: 0.3, y: 0.3 }, { x: 0.5, y: 0.4 }, { x: 0.7, y: 0.3 }, { x: 0.6, y: 0.7 }, { x: 0.4, y: 0.7 }
     ]
   }, // 10
   {
     name: "Aquarius",
-    timeLimit: 15,
+    timeLimit: 10,
     stars: [
       { x: 0.2, y: 0.2 }, { x: 0.3, y: 0.4 }, { x: 0.4, y: 0.2 }, { x: 0.5, y: 0.4 }, { x: 0.6, y: 0.2 }, { x: 0.7, y: 0.4 }
     ]
   }, // 11
   {
     name: "Pisces",
-    timeLimit: 14,
+    timeLimit: 9,
     stars: [
       { x: 0.3, y: 0.5 }, { x: 0.4, y: 0.3 }, { x: 0.5, y: 0.3 }, { x: 0.6, y: 0.5 }, { x: 0.5, y: 0.7 }, { x: 0.4, y: 0.7 }
     ]
@@ -134,8 +134,8 @@ let ship = {
   y: CANVAS_HEIGHT / 2,
   vx: 0,
   vy: 0,
-  speed: 5,
-  boostMulti: 1.5,
+  speed: 2.5,
+  boostMulti: 2.0,
   brakeMulti: 0.5,
   angle: 0
 };
